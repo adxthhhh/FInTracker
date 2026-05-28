@@ -28,9 +28,53 @@ int main() {
     float expense = 0.0;
     float balance = 0.0;
 
+    //Welcome Header
+    
+    printf("\n \t Welcome to FinTrack \t \n");
+    printf("--------------------------------\n");
+     
+    //---FILE LOADING LOGIC (loading data from csv file)---
+    FILE *file = fopen("fintrack.csv","r");
+    
+    if(file!=NULL){
+        
+        //The file exists! Reading the contents of the file line by line until the end of file
+        // Using %[^,] to read until comma is reached.
+        
+        while(fscanf(file,"%[^,],%[^,],%[^,],%f,%c \n",
+                           ledger[current_count].date,
+                           ledger[current_count].time,
+                           ledger[current_count].description,
+                           &ledger[current_count].amount,
+                           &ledger[current_count].type) == 5) {
+        
+        // Rebuilding the dashboard math as each transaction is loaded
+        if(ledger[current_count].type == 'C' || ledger[current_count].type == 'c'){
+        income += ledger[current_count].amount;
+     } else if (ledger[current_count].type == 'D' || ledger[current_count].type == 'd'){
+        expense += ledger[current_count].amount;
+        }
+        
+        //Move to the next slot in the array
+        current_count++; 
+                        
+    }     
+    
+    //FInalize the balance
+    balance = income - expense;
+    
+    fclose(file);
+    
+    printf("\n[System: Successfully loaded %d past transactions from database!]\n \n",current_count);
+    } else { 
+     printf("\n[System: No existing database found. Starting a fresh ledger!]\n");
+     }
+     
+     
+     
+     
     do {
         // --- UI ---
-        printf("\nWelcome to FinTrack\n");
         printf("------------------------\n");
         printf("|\tMonthly\t\t|\n");
         printf("------------------------\n");
