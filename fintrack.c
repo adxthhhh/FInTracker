@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <time.h>
+#include<stdio.h>
+#include<time.h>
 
 #define MAX_TRANSACTIONS 1000 // Defines our memory limit
 
@@ -78,7 +78,39 @@ int main() {
  
                 printf("\n Credit/Debit (Enter C or D):  ");
                 scanf(" %c",&ledger[current_count].type);
-
+                
+                // Update Dashboard Totals
+                if (ledger[current_count].type == 'C' || ledger[current_count].type == 'c') {
+                     income = income + ledger[current_count].amount;
+                } else if (ledger[current_count].type == 'D' || ledger[current_count].type == 'd') {
+                     expense = expense + ledger[current_count].amount;
+                }
+                
+                // Calculate balance
+                balance = income - expense;
+                  
+                //FILE saving logic
+                //Open a file in append mode ( Creates the file if it does not exist )
+                
+                FILE *file = fopen("fintrack.csv","a");
+                
+                //Checking if file opened successfully
+                if(file == NULL){
+                    printf("Error : Could not open database file! \n");
+                }else{
+                //Write the data separated by comma
+                fprintf(file,"%s,%s,%s,%.2f,%c \n",
+                        ledger[current_count].date,
+                        ledger[current_count].time,
+                        ledger[current_count].description,
+                        ledger[current_count].amount,
+                        ledger[current_count].type);
+                        
+                fclose(file);
+                
+                printf("Transactions successfully saved to fintrack.csv! \n");
+                }      
+              
                 // Increment the counter so the next transaction moves to the next slot!
                 current_count++; 
 
@@ -131,4 +163,3 @@ int main() {
 
     return 0;
 }
-
